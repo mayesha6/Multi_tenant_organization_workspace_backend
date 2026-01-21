@@ -21,6 +21,13 @@ const getAllTasks = async (organizationId: string) => {
   });
 };
 
+const getAssignedTasks = async (
+  organizationId: Types.ObjectId,
+  userId: Types.ObjectId
+) => {
+  return Task.find({ organizationId, assignedTo: userId, isDeleted: false });
+};
+
 const getTaskById = async (taskId: string, organizationId: string) => {
   const task = await Task.findOne({
     _id: taskId,
@@ -64,6 +71,7 @@ const deleteTask = async (taskId: string, organizationId: string) => {
 export const TaskServices = {
   createTask,
   getAllTasks,
+  getAssignedTasks,
   getTaskById,
   updateTask,
   deleteTask,

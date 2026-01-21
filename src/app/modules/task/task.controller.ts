@@ -24,8 +24,15 @@ const createTask = catchAsync(async (req: Request, res: Response) => {
 
 const getAllTasks = catchAsync(async (req: Request, res: Response) => {
   const user = req.user as IUserJwtPayload;
-  const tasks = await TaskServices.getAllTasks(user.organizationId);
-
+  let tasks;
+  if (user.role === "ORGANIZATION_MEMBER") {
+    tasks = await TaskServices.getAssignedTasks(
+      new Types.ObjectId(user.organizationId),
+      new Types.ObjectId(user._id),
+    );
+  } else {
+    tasks = await TaskServices.getAllTasks(user.organizationId);
+  }
   sendResponse(res, {
     success: true,
     statusCode: 200,
