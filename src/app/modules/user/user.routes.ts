@@ -10,8 +10,14 @@ import { parseFormDataMiddleware } from "../../middlewares/parseFormDataMiddlewa
 const router = Router();
 
 router.post(
-  "/register",
-  checkAuth(Role.ORGANIZATION_ADMIN, Role.SUPER_ADMIN),
+  "/register-organization-admin",
+  checkAuth(Role.PLATFORM_ADMIN),
+  validateRequest(createUserZodSchema),
+  UserControllers.createOrganizationAdmin,
+);
+router.post(
+  "/register-organization-member",
+  checkAuth(Role.ORGANIZATION_ADMIN),
   validateRequest(createUserZodSchema),
   UserControllers.createUser,
 );

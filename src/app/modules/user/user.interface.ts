@@ -3,8 +3,7 @@ import { Types } from "mongoose";
 export enum Role {
   PLATFORM_ADMIN = "PLATFORM_ADMIN",
   ORGANIZATION_ADMIN = "ORGANIZATION_ADMIN",
-  ORGANIZATION_MEMBER = "ORGANIZATION_MEMBER",
-  SUPER_ADMIN = "SUPER_ADMIN",
+  ORGANIZATION_MEMBER = "ORGANIZATION_MEMBER"
 }
 
 export interface IAuthProvider {
@@ -26,10 +25,10 @@ export interface IUser {
   phone?: string;
   picture?: string;
   address?: string;
-  isDeleted?: string;
+  isDeleted?: boolean;
   isActive?: IsActive;
   role: Role;
-  organizationId?: Types.ObjectId | null;
+  organizationId: Types.ObjectId;
   auths: IAuthProvider[];
   createdAt?: Date;
 }

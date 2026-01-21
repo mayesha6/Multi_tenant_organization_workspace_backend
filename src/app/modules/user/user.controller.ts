@@ -9,6 +9,25 @@ import { UserServices } from "./user.service";
 import { IUserJwtPayload } from "../../interfaces";
 import { Types } from "mongoose";
 
+const createOrganizationAdmin = catchAsync(async (req: Request, res: Response) => {
+  const { email, password, name, organizationId } = req.body;
+
+  const admin = await UserServices.createOrganizationAdmin({
+    email,
+    password,
+    name,
+    organizationId,
+  });
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.CREATED,
+    message: "Organization Admin created successfully",
+    data: admin,
+  });
+});
+
+
 const createUser = catchAsync(async (req: Request, res: Response) => {
   const admin = req.user as IUserJwtPayload;
 
@@ -29,7 +48,7 @@ const getAllUsers = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const query = req.query;
     const result = await UserServices.getAllUsers(
-      query as Record<string, string>
+      query as Record<string, string>,
     );
 
     sendResponse(res, {
@@ -39,7 +58,7 @@ const getAllUsers = catchAsync(
       data: result.data,
       meta: result.meta,
     });
-  }
+  },
 );
 
 const getMe = catchAsync(
@@ -53,7 +72,7 @@ const getMe = catchAsync(
       message: "Your profile Retrieved Successfully",
       data: result.data,
     });
-  }
+  },
 );
 
 const getSingleUser = catchAsync(
@@ -66,7 +85,7 @@ const getSingleUser = catchAsync(
       message: "User Retrieved Successfully",
       data: result.data,
     });
-  }
+  },
 );
 
 const updateUser = catchAsync(
@@ -78,7 +97,7 @@ const updateUser = catchAsync(
     const user = await UserServices.updateUser(
       userId,
       payload,
-      verifiedToken as JwtPayload
+      verifiedToken as JwtPayload,
     );
 
     sendResponse(res, {
@@ -87,7 +106,7 @@ const updateUser = catchAsync(
       message: "User Updated Successfully",
       data: user,
     });
-  }
+  },
 );
 
 export const updateMyProfile = catchAsync(
@@ -123,7 +142,7 @@ export const updateMyProfile = catchAsync(
       userId,
       payload,
       decodedToken,
-      req.file
+      req.file,
     );
 
     sendResponse(res, {
@@ -132,14 +151,15 @@ export const updateMyProfile = catchAsync(
       message: "Profile updated successfully.",
       data: updatedUser,
     });
-  }
+  },
 );
 
 export const UserControllers = {
+  createOrganizationAdmin,
   createUser,
   getAllUsers,
   getMe,
   getSingleUser,
   updateUser,
-  updateMyProfile
+  updateMyProfile,
 };

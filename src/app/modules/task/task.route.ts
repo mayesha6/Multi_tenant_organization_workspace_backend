@@ -16,7 +16,7 @@ router.post(
 
 router.get(
   "/",
-  checkAuth(Role.ORGANIZATION_ADMIN),
+  checkAuth(Role.ORGANIZATION_ADMIN, Role.ORGANIZATION_MEMBER,),
   TaskControllers.getAllTasks
 );
 
@@ -26,7 +26,7 @@ router.get(
   TaskControllers.getTaskById
 );
 
-router.put(
+router.patch(
   "/:id",
   checkAuth(Role.ORGANIZATION_ADMIN),
   validateRequest(TaskValidations.updateTaskSchema),

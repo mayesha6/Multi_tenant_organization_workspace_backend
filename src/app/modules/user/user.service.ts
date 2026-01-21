@@ -11,6 +11,37 @@ import {
 } from "../../config/cloudinary.config";
 import bcryptjs from "bcryptjs";
 import { QueryBuilder } from "../../utils/QueryBuilder";
+import { Types } from "mongoose";
+
+const createOrganizationAdmin = async (payload: Partial<IUser>) => {
+  const { email, password, name, organizationId } = payload;
+
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    throw new AppError(httpStatus.BAD_REQUEST, "User already exists");
+  }
+
+  const hashedPassword = await bcryptjs.hash(password as string, Number(envVars.BCRYPT_SALT_ROUND));
+
+ const authProvider: IAuthProvider = {
+    provider: "credentials",
+    providerId: email as string,
+  };
+if (!organizationId || !Types.ObjectId.isValid(organizationId)) {
+  throw new AppError(httpStatus.BAD_REQUEST, "Invalid organizationId");
+}
+  const user = await User.create({
+    email,
+    password: hashedPassword,
+    name,
+    auths: [authProvider],
+    role: Role.ORGANIZATION_ADMIN,
+    organizationId
+
+  });
+
+  return user;
+};
 
 const createUser = async (payload: Partial<IUser>) => {
   const { email, password, ...rest } = payload;
@@ -162,6 +193,7 @@ export const updateMyProfile = async (
 };
 
 export const UserServices = {
+  createOrganizationAdmin,
   createUser,
   getAllUsers,
   getMe,
